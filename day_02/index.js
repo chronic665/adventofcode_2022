@@ -1,40 +1,35 @@
 
-const opponentChoices = {
-    "ROCK": { sign: "A" },
-    "PAPER": { sign: "B" },
-    "SCISSORS": { sign: "C" }
-}
-
 const hands = {
     // ROCK
-    "X": {
+    "A": { 
         points: 1,
-        draws: (sign) => sign == opponentChoices["ROCK"].sign,
-        beats: (sign) => sign == opponentChoices["SCISSORS"].sign
+        beats: "C",
+        loses: "B"
     },
     // PAPER
-    "Y": {
+    "B":  { 
         points: 2,
-        draws: (sign) => sign == opponentChoices["PAPER"].sign,
-        beats: (sign) => sign == opponentChoices["ROCK"].sign
+        beats: "A",
+        loses: "C"
     },
     // SCISSORS
-    "Z": {
+    "C":  { 
         points: 3,
-        draws: (sign) => sign == opponentChoices["SCISSORS"].sign,
-        beats: (sign) => sign == opponentChoices["PAPER"].sign
-    }
+        beats: "B",
+        loses: "A"
+    },
 }
 
-function points(opponent, choice) {
-    if (choice.beats(opponent)) {
-        return choice.points + 6
+function points(opponent, outcome) {
+    // look up the opposing card for win/loss for the opponent, then get its points
+    if (outcome == 'X') {
+        return hands[hands[opponent].beats].points
     }
-    if (choice.draws(opponent)) {
-        return choice.points + 3
+    if (outcome == 'Y') {
+        return hands[opponent].points + 3
     }
-    // looses
-    return choice.points
+    // win
+    return hands[hands[opponent].loses].points + 6
 }
 
 var lineReader = require('readline').createInterface({
@@ -46,9 +41,8 @@ let totalPoints = 0
 let games = 0
 lineReader.on('line', function (line) {
     let choices = line.split(" ")
-    totalPoints += points(choices[0], hands[choices[1]])
+    totalPoints += points(choices[0], choices[1])
     games++
 }).on("close", () => {
     console.log(`total points after ${games} games: ${totalPoints}`)
 });
-
